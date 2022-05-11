@@ -1,6 +1,7 @@
 using PlatformService.Models;
 
 namespace PlatformService.Data;
+
 public class PlatformRepository : IPlatformRepository
 {
     private readonly AppDbContext _context;

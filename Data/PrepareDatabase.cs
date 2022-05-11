@@ -14,7 +14,8 @@ public static class PrepareDatabase
 
     private static void SeedData(AppDbContext context)
     {
-        if (!context.Platforms.Any()){
+        if(!context.Platforms.Any())
+        {
             Console.WriteLine("--> Seeding Data ...");
 
             context.Platforms.AddRange(
