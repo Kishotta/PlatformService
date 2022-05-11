@@ -16,7 +16,7 @@ public static class PrepareDatabase
     {
         if(!context.Platforms.Any())
         {
-            Console.WriteLine("--> Seeding Data ...");
+            Console.WriteLine("--> Seeding Data...");
 
             context.Platforms.AddRange(
                 new Platform("Dot Net", "Microsoft", "Free"),
