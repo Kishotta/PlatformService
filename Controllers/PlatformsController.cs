@@ -20,6 +20,7 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<PlatformReadDto>), StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<PlatformReadDto>> GetPlatforms()
     {
         var platformModels = _repository.GetAllPlatforms();
@@ -27,6 +28,8 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetPlatformById")]
+    [ProducesResponseType(typeof(PlatformReadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<PlatformReadDto> GetPlatformById(int id)
     {
         var platformModel = _repository.GetPlatformById(id);
