@@ -1,4 +1,5 @@
-using PlatformService.Models;
+using Microsoft.EntityFrameworkCore;
+using PlatformService.Entities;
 
 namespace PlatformService.Data;
 
@@ -11,7 +12,7 @@ public class PlatformRepository : IPlatformRepository
         _context = context;
     }
 
-    public void CreatePlatform(Platform platform)
+    public void Create(Platform platform)
     {
         if(platform == null)
         {
@@ -21,19 +22,55 @@ public class PlatformRepository : IPlatformRepository
         _context.Platforms.Add(platform);
     }
 
-
-    public IEnumerable<Platform> GetAllPlatforms()
+    public async Task CreateAsync(Platform platform)
     {
-        return _context.Platforms.ToList();
+        if(platform == null)
+        {
+            throw new ArgumentNullException(nameof(platform));
+        }
+
+        await _context.Platforms.AddAsync(platform);
     }
 
-    public Platform? GetPlatformById(int id)
+     public IEnumerable<Platform> Find(Specification<Platform> specification)
     {
-        return _context.Platforms.FirstOrDefault(platform => platform.Id == id);
+        return _context
+            .Platforms
+            .Where(specification.ToExpression())
+            .ToList();
+    }
+
+    public async Task<IEnumerable<Platform>> FindAsync(Specification<Platform> specification)
+    {
+        return await _context
+            .Platforms
+            .Where(specification.ToExpression())
+            .ToListAsync();
+    }
+
+    public Platform? FindOne(Specification<Platform> specification)
+    {
+        return _context
+            .Platforms
+            .Where(specification.ToExpression())
+            .FirstOrDefault();
+    }
+
+    public async Task<Platform?> FindOneAsync(Specification<Platform> specification)
+    {
+        return await _context
+            .Platforms
+            .Where(specification.ToExpression())
+            .FirstOrDefaultAsync();
     }
 
     public bool SaveChanges()
     {
         return _context.SaveChanges() > 0;
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
     }
 }

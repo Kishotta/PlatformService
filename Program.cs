@@ -1,3 +1,7 @@
+using System.ComponentModel;
+using Hellang.Middleware.ProblemDetails;
+using MediatR;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
 
@@ -8,11 +12,25 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDataba
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options => {
+    options.CustomSchemaIds(type => type.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? type.ToString());
+
+    options.TagActionsBy(api => {
+        if (api.GroupName != null) return new[] { api.GroupName };
+        if (api.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            return new[] { controllerActionDescriptor.ControllerName };
+        throw new InvalidOperationException("Unable to determine tag for endpoint");
+    });
+
+    options.DocInclusionPredicate((name, api) => true);
+});
 
 var app = builder.Build();
 
@@ -27,6 +45,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseProblemDetails();
 
 PrepareDatabase.PreparePopulation(app);
 
