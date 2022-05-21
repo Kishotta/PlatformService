@@ -4,12 +4,15 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
+using PlatformService.Services.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // TODO: Replace with Sql Server database
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+
+builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
@@ -31,6 +34,8 @@ builder.Services.AddSwaggerGen(options => {
 
     options.DocInclusionPredicate((name, api) => true);
 });
+
+Console.WriteLine($"--> CommandService Endpoint: {builder.Configuration["CommandService"]}");
 
 var app = builder.Build();
 

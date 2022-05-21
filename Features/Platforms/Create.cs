@@ -22,6 +22,6 @@ public class Create : ControllerBase
     public async Task<ActionResult<Response>> HandleAsync([FromBody] Request request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(request, cancellationToken);
-        return CreatedAtRoute("GetPlatformById", new { PlatformId = result.Id }, result);
+        return CreatedAtRoute("GetPlatformById", new { Id = result.Id }, result);
     }
 }
